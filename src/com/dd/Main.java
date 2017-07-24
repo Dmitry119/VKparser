@@ -1,5 +1,5 @@
 /*
-    VKparser version 1.0
+    VKparser version 1.2
 
     HTTPS запрос -> VK API -> JSON -> parse JSON -> export to Gephi
 
@@ -10,6 +10,9 @@
     Пример запроса: https://api.vk.com/method/users.get?user_id=210700286&v=5.52 вместо users.get ставить нужную команду
 
     Парсить JSON через добавление сторонней библиотеки json org.json.JSONObject class http://theoryapp.com/parse-json-in-java/
+
+    НАДО ДОБАВИТЬ ОБРАБОТКУ ОШИБОК, КАК КОДОВ ОШИБКИ ОТ ВК ТАК И ТОГО ЧТО В throws IOException И Т.П.
+    Сделать свой аналг консоли в окне
  */
 
 package com.dd;
@@ -20,7 +23,13 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        Friend fr = new Friend("https://api.vk.com/method/users.get?user_id=7000763&v=5.52");
+
+
+        String starting_user_id = "7000763"; // с этого юзера начинаем парсинг
+
+        Profile fr = new Profile(starting_user_id);
+
+        // первая страница с которой начинаешь - задавать именно id её не адрес, и метод должен потом хавать айдишники и парсить по куче API!
 
         System.out.println(
                 "id = " + fr.getId() + "\n" +
