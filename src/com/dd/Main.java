@@ -1,5 +1,5 @@
 /*
-    VKparser version 1.2
+    VKparser version 1.3
 
     HTTPS запрос -> VK API -> JSON -> parse JSON -> export to Gephi
 
@@ -18,25 +18,69 @@
 package com.dd;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Main {
 
+
     public static void main(String[] args) throws IOException {
 
+        int counter = 0; // сколько раз программа провела парсинг
 
+        String friend_list[];
 
         String starting_user_id = "7000763"; // с этого юзера начинаем парсинг
 
         Profile fr = new Profile(starting_user_id);
 
-        // первая страница с которой начинаешь - задавать именно id её не адрес, и метод должен потом хавать айдишники и парсить по куче API!
 
+
+        //копия - работающий код: просто список друзей одного человека
+//        for (String s : fr.getFriends()) {
+//
+//            Profile tmp = new Profile(s); //вот этот прием выпиши, что в цикле под одним и тем же именем разные классы создаешь. как бы еще сделать что бы имена у них разные были...
+//
+//        }
+
+
+
+        //работающий код: просто список друзей одного человека + его друзей
+        for (String s : fr.getFriends()) {
+
+            Profile tmp = new Profile(s); //вот этот прием выпиши, что в цикле под одним и тем же именем разные классы создаешь. как бы еще сделать что бы имена у них разные были...
+
+            if ( tmp.getFriends() != null) {
+                for (String s2 : tmp.getFriends()) {
+                    Profile tmp2 = new Profile(s2);
+
+                }
+            }
+        }
+
+
+
+
+
+
+    }
+
+    // первая страница с которой начинаешь - задавать именно id её не адрес, и метод должен потом хавать айдишники и парсить по куче API!
+
+
+
+
+
+
+    //dont use
+    public static void debug(Profile fr){
         System.out.println(
                 "id = " + fr.getId() + "\n" +
-                "first_name = " + fr.getFirst_name() + "\n" +
-                "last_name = " + fr.getLast_name()
+                        "first_name = " + fr.getFirst_name() + "\n" +
+                        "last_name = " + fr.getLast_name()
         );
 
+        System.out.println("Number of friends: " + fr.getFriends_count());
+        System.out.println("Frinds list : " + Arrays.toString(fr.getFriends()));
     }
 
 }

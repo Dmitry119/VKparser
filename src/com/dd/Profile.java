@@ -26,9 +26,22 @@ class Profile {
     private String last_name;
     private String[] friends;
     private JSONObject jsonObj;
+    private boolean isDeleted;
+    private boolean idisDeleted;
+    private static Integer counter = 0; //счетчик, сколько раз прошел парсинг
+
+    public Integer getFriends_count() {
+        return friends_count;
+    }
+
+    public String[] getFriends() {
+        return friends;
+    }
 
     Profile(String id) throws IOException {
 
+        counter++;
+        System.out.println("counter: " + counter);
 
         jsonObj = parse_user_info(id); //вместо адреса должен быть id...и метд парс должен быть составным - там складывается загруженный id и произвольный API, и тогда несколько строк parse(API + ID) запарсят все
         // parse("https://api.vk.com/method/" + API[i] + "?user_id=" + id + "&v=5.52")
@@ -44,20 +57,36 @@ class Profile {
 
         jsonObj = parse_friends(id);
 
-        this.friends_count = jsonObj.getJSONObject("response").getInt("count"); // получаем число друзей
 
-        this.friends = new String[friends_count];
 
-        //заполняем массив friends
-        for (int i = 0; i < friends_count; i++) {
-            Integer tmp;
-            tmp = jsonObj.getJSONObject("response").getJSONArray("items").getInt(i); //способа напрямую массив json слить в обычный массив - не нашел, а tmp надо т.к. int в String только так можно...в эту строчку не дает дописать .toString
-            friends[i] = tmp.toString();
+        // tra-catch - на случай если страница удалена, тогда приходит запрос об ошибке
+        try {
+            this.friends_count = jsonObj.getJSONObject("response").getInt("count"); // получаем число друзей
+
+            this.friends = new String[friends_count];
+
+            //заполняем массив friends
+            for (int i = 0; i < friends_count; i++) {
+                Integer tmp;
+                tmp = jsonObj.getJSONObject("response").getJSONArray("items").getInt(i); //способа напрямую массив json слить в обычный массив - не нашел, а tmp надо т.к. int в String только так можно...в эту строчку не дает дописать .toString
+                friends[i] = tmp.toString();
+            }
+        }
+        catch(Exception e){
+            System.out.println("Ошибка при получении списка друзей у пользователя "+ id + " " + first_name + " " + last_name);
+            isDeleted = true;
+
         }
 
+        log();
 
-        System.out.println("Number of friends: " + friends_count);
-        System.out.println("Frinds list : " + Arrays.toString(friends));
+
+    }
+
+
+    private void log(){
+
+        System.out.println(id + " " + first_name + " " + last_name + " " + friends_count + " " + Arrays.toString(friends));
 
     }
 
@@ -129,5 +158,17 @@ class Profile {
 
     public JSONObject getJsonObj() {
         return jsonObj;
+    }
+
+    public boolean isIdisDeleted() {
+        return idisDeleted;
+    }
+
+    public static Integer getCounter() {
+        return counter;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
     }
 }
