@@ -29,6 +29,11 @@ class Profile {
     private boolean isDeleted;
     private boolean idisDeleted;
     private static Integer counter = 0; //счетчик, сколько раз прошел парсинг
+    private static double avg_speed;
+    private Integer subscribes_users_count = 0;
+    private Integer subscribes_groups_count = 0;
+    private String[] subscribes_users;
+    private String[] subscribes_groups;
 
     public Integer getFriends_count() {
         return friends_count;
@@ -41,7 +46,9 @@ class Profile {
     Profile(String id) throws IOException {
 
         counter++;
-        System.out.println("counter: " + counter);
+        avg_speed = counter/(0.001*(System.currentTimeMillis() - Main.timestart));
+        System.out.println("Обработано профилей " + counter + "; Прошло времени "+ 0.001*(System.currentTimeMillis() - Main.timestart) + "; Скорость обработки: " +
+                 avg_speed + " профилей в секунду.");
 
         jsonObj = parse_user_info(id); //вместо адреса должен быть id...и метд парс должен быть составным - там складывается загруженный id и произвольный API, и тогда несколько строк parse(API + ID) запарсят все
         // parse("https://api.vk.com/method/" + API[i] + "?user_id=" + id + "&v=5.52")
@@ -78,15 +85,42 @@ class Profile {
 
         }
 
-        log();
 
+        jsonObj = parse_subscribes(id);  // {"response": {"users": {"count":NUMBER,"items":[...,...,...]}, "groups":{"count":NUMBER,"items":[...,...,...,]}}}
+
+        subscribes_users_count = jsonObj.getJSONObject("response").getJSONObject("users").getInt("count");
+        subscribes_groups_count = jsonObj.getJSONObject("response").getJSONObject("groups").getInt("count");
+
+        subscribes_users = new String[subscribes_users_count];
+        subscribes_groups = new String[subscribes_groups_count];
+
+
+        for (int i = 0; i < subscribes_users_count; i++) {
+            Integer tmp;
+            tmp = jsonObj.getJSONObject("response").getJSONObject("users").getJSONArray("items").getInt(i); //сразу в стринг нельзя, только так вроде
+            subscribes_users[i] = tmp.toString();
+        }
+
+        for (int i = 0; i < subscribes_groups_count; i++) {
+            Integer tmp;
+            tmp = jsonObj.getJSONObject("response").getJSONObject("groups").getJSONArray("items").getInt(i);
+            subscribes_groups[i] = tmp.toString();
+        }
+
+
+        log();
 
     }
 
 
     private void log(){
 
-        System.out.println(id + " " + first_name + " " + last_name + " " + friends_count + " " + Arrays.toString(friends));
+        System.out.println(id + " " + first_name + " " + last_name + " " + friends_count + " Подписки (группы + люди): " + subscribes_groups_count + " " + subscribes_users_count);
+        System.out.println("Friends: " + Arrays.toString(friends));
+        System.out.println("Subscribes_users: " + Arrays.toString(subscribes_users));
+        System.out.println("Subscribes_groups: " + Arrays.toString(subscribes_groups));
+        System.out.println();
+
 
     }
 
@@ -97,8 +131,6 @@ class Profile {
         String API_ver = "&v=5.52"; // Без этой штуки - в браузере работает, а в проге - нет, т.к. в ответе на запрос вместо id написано uid.
 
         String address = API + id + API_ver; // Создаем запрос
-
-        String inputData = null;
 
         URL url = new URL(address);
 
@@ -127,8 +159,6 @@ class Profile {
 
         String address = API + id + API_ver; // Создаем запрос
 
-        String inputData = null;
-
         URL url = new URL(address);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -142,6 +172,24 @@ class Profile {
 
         return jsonObj; //Возвращаем JSON object
     }
+
+    private JSONObject parse_subscribes(String id) throws IOException {
+
+        String API = "https://api.vk.com/method/users.getSubscriptions?user_id=";
+
+        String API_ver = "&v=5.52"; // Без этой штуки - в браузере работает, а в проге - нет, т.к. в ответе на запрос вместо id написано uid.
+
+        String address = API + id + API_ver; // Создаем запрос
+
+        URL url = new URL(address);
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+        JSONObject jsonObj = new JSONObject(reader.readLine());
+
+        return jsonObj; //Возвращаем JSON object
+    }
+
 
 
     public String getId() {
@@ -170,5 +218,9 @@ class Profile {
 
     public boolean isDeleted() {
         return isDeleted;
+    }
+
+    public static double getAvg_speed() {
+        return avg_speed;
     }
 }
