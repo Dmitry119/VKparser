@@ -1,0 +1,50 @@
+
+PROFILE:
+-id
+-first_name
+-last_name
+-short address for page???
+-friendsCount
+-subscribesUsersCount
+-subscribesGroupsCount
+-friends[]
+-subscribesUsers[]
+-subscribesGroups[]
+
+print to CSV:
+"first_name"; first_name
+"last_name"; last_name
+"id"; id
+"friendsCount"; friendsCount
+"subscribesUsersCount";subscribesUsersCount
+"subscribesGroupsCount";"subscribesGroupsCount";
+"friends"; friend-1 name; friend-2 name...
+"friends (id); friend-1 id; friend-2 id...
+"subscribesUsers"; user-1 name; user-2 name
+"subscribesUsers (id)"; user-1 id; user-2 id
+"subscribesGroups"; Groups-1 name; Groups-2 name
+"subscribesGroups (id)"; Groups-1 id; Groups-2 id  // стоп, а как брать имена для групп?
+"end";
+
+
+
+mb in arrays:
+
+ARRAY-1:
+id (user); first_name; last_name; # of friends; # of subsc-users; # of subsc groups
+
+ARRAY-2
+id (group); group_name
+
+ARRAY-3
+id-1 ; id_friend-1; id_friend_2; ...
+id-2 ; id_friend-1; id_friend_2; ...
+
+
+ARRAY-4
+id-1 ; id_group-1; id_group_2; ...
+
+ARRAY-5
+id-1 ; id_sub-user-1; id_sub-user_2; ...
+
+делать двумерный арраулист, он динамический!!     public static ArrayList<ArrayList<String>> friends = new ArrayList<ArrayList<String>>();
