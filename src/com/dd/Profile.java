@@ -5,10 +5,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import org.json.JSONObject;
 import org.json.JSONArray;
+
+import java.io.Serializable;
 import java.util.Arrays;
 import java.net.URL;
 
-class Profile {
+class Profile implements Serializable {
 
     private static String API_subscribes = "https://api.vk.com/method/users.getSubscriptions?user_id=";
     private static String API_user_info = "https://api.vk.com/method/users.get?user_id=";
